@@ -8,12 +8,12 @@
 import RxSwift
 import UIKit
 
-protocol ModalRouteTransitioning: RouteTransitioning where RouteTransition == ModalRouteTransitioner.RouteTransition {
+public protocol ModalRouteTransitioning: RouteTransitioning where RouteTransition == ModalRouteTransitioner.RouteTransition {
     func dismissChild()
 }
 
-final class ModalRouteTransitioner: ModalRouteTransitioning {
-    struct RouteTransition {
+public final class ModalRouteTransitioner: ModalRouteTransitioning {
+    public struct RouteTransition {
         var animated: Bool = true
         var style: UIModalPresentationStyle = .overCurrentContext
     }
@@ -21,18 +21,18 @@ final class ModalRouteTransitioner: ModalRouteTransitioning {
     private var root: UIViewController?
     private let disposeBag = DisposeBag()
 
-    func setup(with router: Routable) {
+    public func setup(with router: Routable) {
         self.root = router.viewController
     }
 
-    func transition(viewController: UIViewController, type: RouteTransition) -> Completable {
+    public func transition(viewController: UIViewController, type: RouteTransition) -> Completable {
         viewController.modalPresentationStyle = type.style
         self.root?.present(viewController, animated: type.animated, completion: nil)
 
         return viewController.rx.dismissed
     }
 
-    func dismissChild() {
+    public func dismissChild() {
         self.root?.presentedViewController?.dismiss(animated: true, completion: nil)
     }
 }

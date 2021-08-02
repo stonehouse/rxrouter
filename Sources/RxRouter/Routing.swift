@@ -1,5 +1,5 @@
 //
-//  RouterStepper.swift
+//  Routing.swift
 //  RxRouter
 //
 //  Created by Jason Chan on 19/8/20.
@@ -8,9 +8,9 @@
 import Foundation
 import RxSwift
 
-protocol RouterStep {}
+public protocol RouterStep {}
 
-protocol Routing {
+public protocol Routing {
     associatedtype Step: RouterStep
     var step: Observable<Step> { get }
 }

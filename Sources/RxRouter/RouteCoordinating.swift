@@ -1,19 +1,17 @@
 //
-//  RouterPlay.swift
+//  RouteCoordinating.swift
 //  RxRouter
 //
-//  Created by Alexander Stonehouse on 13/8/20.
+//  Created by Alexander Stonehouse on 2/8/21.
 //
 
-import RxSwift
 import UIKit
+import RxSwift
 
-protocol Routable: class {
-    var viewController: UIViewController { get }
-    func completed()
-}
-
-protocol RouteCoordinating: Routable {
+/// Serves as the 'factory' for the `Router`, handling `Step` events
+/// from the router and instantiating the appropriate UI and passing that
+/// UI to the `RouteTransitioner` to be presented.
+public protocol RouteCoordinating: Routable {
 
     associatedtype RouteTransitioner: RouteTransitioning
     associatedtype Router: Routing
@@ -29,15 +27,18 @@ protocol RouteCoordinating: Routable {
 
 extension RouteCoordinating {
 
-    var viewController: UIViewController {
+    public var viewController: UIViewController {
         root
     }
 
-    func completed() {
+    public func completed() {
         disposeBag = DisposeBag()
     }
 
-    func setup() {
+    /// Must be called after init in implementation. Ensures that the
+    /// subscription to the router is set up and the `navigate(to:)`
+    /// method will be called.
+    public func setup() {
         transitioner.setup(with: self)
         router.step
             .subscribe(onNext: { [weak self] in
@@ -46,13 +47,13 @@ extension RouteCoordinating {
             .disposed(by: disposeBag)
     }
 
-    func transition(viewController: UIViewController, type: RouteTransitioner.RouteTransition) {
+    public func transition(viewController: UIViewController, type: RouteTransitioner.RouteTransition) {
         transitioner.transition(viewController: viewController, type: type)
             .subscribe()
             .disposed(by: disposeBag)
     }
 
-    func transition(routeCoordinator: Routable, type: RouteTransitioner.RouteTransition) {
+    public func transition(routeCoordinator: Routable, type: RouteTransitioner.RouteTransition) {
         transitioner.transition(routeCoordinator: routeCoordinator, type: type)
             .subscribe()
             .disposed(by: disposeBag)
